@@ -18,5 +18,5 @@ return {
 
 	"savq/melange-nvim",
 
-	"dracula/vim"
+	"dracula/vim",
 }
