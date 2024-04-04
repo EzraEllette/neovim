@@ -1,4 +1,5 @@
 -- Handle plugins with lazy.nvim
+vim.g.riscv_asm_all_enable = true
 require("core.lazy")
 
 -- General Neovim keymaps
@@ -7,7 +8,7 @@ require("core.keymaps")
 -- Other options
 require("core.options")
 
-vim.keymap.set('n', '<leader>e', '<Cmd>Neotree toggle<CR>')
+vim.keymap.set('n', '<leader>e', '<Cmd>Neotree toggle position=right<CR>')
 
 require("mason").setup()
 require("mason-lspconfig").setup()
@@ -15,7 +16,6 @@ require("mason-lspconfig").setup()
 local cmp_nvim_lsp = require "cmp_nvim_lsp"
 
 require("lspconfig").clangd.setup {
-  on_attach = on_attach,
   capabilities = cmp_nvim_lsp.default_capabilities(),
   cmd = {
     "clangd",
@@ -23,8 +23,16 @@ require("lspconfig").clangd.setup {
   },
 }
 
+require("lspconfig").rust_analyzer.setup {
+  capabilities = cmp_nvim_lsp.default_capabilities(),
+}
+
 require("lspconfig").tsserver.setup {
-    virtual_text = true,
+  virtual_text = true,
+}
+
+require("lspconfig").graphql.setup {
+  capabilities = cmp_nvim_lsp.default_capabilities(),
 }
 
 vim.diagnostic.config({
@@ -34,12 +42,12 @@ vim.diagnostic.config({
   },
   severity_sort = true,
   float = {
-    source = "always",  -- Or "if_many"
+    source = "always", -- Or "if_many"
   },
 })
+require 'xbase'.setup()
 
-require'xbase'.setup()
-
+vim.api.nvim_set_keymap('n', '<leader>r', 'Telescope find_files<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>do', '<cmd>lua vim.diagnostic.open_float()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>d[', '<cmd>lua vim.diagnostic.goto_prev()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>d]', '<cmd>lua vim.diagnostic.goto_next()<CR>', { noremap = true, silent = true })
@@ -53,3 +61,8 @@ vim.g.copilot_no_tab_map = true
 vim.api.nvim_set_keymap("i", "<C-e>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
 vim.api.nvim_set_keymap("n", "<Esc><Esc>", '<Esc>:noh<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('t', '<Esc>', "<C-\\><C-N>", { noremap = true, silent = true })
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*",
+  command = "lua vim.lsp.buf.format()",
+})
+vim.g.riscv_asm_all_enable = true
